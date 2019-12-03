@@ -1,0 +1,215 @@
+html, body {
+	margin: 0;
+	padding: 0;
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+	background-color: antiquewhite;
+}
+
+.button {
+	cursor: pointer;
+	user-select: none;
+}
+
+#bandtext {
+	width: 100%;
+	font-size: 1em;
+}
+
+#zustand {
+	text-align: center;
+	font-size: 2em;
+	font-family: monospace;
+	font-weight: bold;
+	margin: 0.5em 0;
+}
+
+#visualizer {
+	margin-bottom: 2em;
+	font-size: 2em;
+}
+
+.cell {
+	outline: 1px solid black;
+	font-size: 0.5em;
+	width: 2em;
+	height: 2em;
+	min-width: 2em;
+	min-height: 2em;
+	max-width: 2em;
+	max-height: 2em;
+	font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+	display: table-cell;
+	vertical-align: middle;
+	text-align: center;
+}
+
+#active-cell-marker-frame {
+	display: block;
+	background-color: transparent;
+	outline: 6px ridge burlywood;
+	outline-offset: -2px;
+	width: 2em;
+	height: 2em;
+	position: absolute;
+	left: 0;
+	right: 0;
+	margin-left: auto;
+	margin-right: auto;
+	z-index: 1;
+	pointer-events: none;
+}
+
+
+#active-cell-marker {
+	display: block;
+	background-color: chartreuse;
+	width: 2em;
+	height: 2em;
+	position: absolute;
+	left: 0;
+	right: 0;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+#cell-container {
+	font-size: 2em;
+	padding-left: calc(50% - 0.5em);
+	position: relative;
+	right: 0em;
+	transition: right 0.5s;
+	transition-timing-function: cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+#controls {
+	width: 75%;
+	height: 50%;
+	margin: 0 auto;
+	display: flex;
+	flex-wrap: wrap;
+}
+
+#step-control {
+	flex: 0 0 100%;
+	font-size: 2em;
+	text-align: center;
+	font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+#speed-slider {
+	width: 15%;
+}
+
+#instruction-editor {
+	height: 100%;
+	width: 70%;
+	background-color: beige;
+	padding: 1em;
+	box-sizing: border-box;
+}
+
+#program-container {
+	height: 100%;
+	width: 30%;
+	background-color: wheat;
+	font-size: 1.25em;
+	font-family: monospace;
+}
+
+#program-text {
+	width: 100%;
+}
+
+.instruction {
+	width: auto;
+	padding: 0.5em 1em;
+	border-bottom: 1px solid;
+	background-image: linear-gradient(to right, rgba(0, 0, 0, 0.0), rgba(0, 0, 0, 0.15));
+	cursor: pointer;
+	transition: padding-left 0.15s;
+}
+
+#new-instruction {
+	width: auto;
+	padding: 0.5em 1em;
+	cursor: pointer;
+	text-align: center;
+}
+
+.viewing {
+	background-image: linear-gradient(to right, rgba(12, 231, 66, 0.15), rgba(19, 224, 190, 0.411));
+}
+
+.current {
+	text-decoration: underline;
+}
+
+.instruction:hover {
+	background-image: linear-gradient(to right, rgba(51, 197, 255, 0.15), rgba(109, 224, 215, 0.541));
+}
+
+label {
+	display: block;
+	text-align: center;
+}
+
+textarea {
+	font-size: 1em;
+	display: block;
+	resize: vertical;
+	max-height: 25%;
+}
+
+input {
+	display: inline-block;
+	font-size: 1em;
+	width: 2em;
+	height: 1em;
+	text-align: center;
+}
+
+.wideinput {
+	width: 80%;
+	margin: 0 auto;
+}
+
+#instruction-input {
+	margin: 2em auto 0 auto;
+	font-size: 2em;
+	text-align: center;
+	max-width: 8em;
+	max-height: 8em;
+	align-content: center;
+}
+
+input[type="radio"] {
+	opacity: 0;
+	position: fixed;
+	width: 0;
+	height: 0;
+}
+
+#direction {
+	display: flex;
+	justify-content: center;
+}
+
+#direction label {
+	display: inline-block;
+	background-color: cornflowerblue;
+	padding: 0.2em;
+	width: 1em;
+	height: 1em;
+	border: 1px solid #444;
+}
+
+#direction input[type="radio"]:checked + label {
+	background-color: #BEEEEF;
+	border-color: #4c4;
+}
+
+#direction label:hover {
+	background-color: #dfd;
+}

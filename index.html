@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<link rel="stylesheet" href="index.css">
+		<link rel="stylesheet" href="fontawesome.css">
+		<script src="jquery.slim.js"></script>
+	</head>
+	<body>
+		<input type="text" id="bandtext">
+		<div id="visualizer">
+			<div id="zustand">
+				q0
+			</div>
+			<div id="band">
+				<div id="active-cell-marker"></div>
+				<div id="active-cell-marker-frame"></div>
+				<div id="cell-container">
+				</div>
+			</div>
+		</div>
+		<div id="controls">
+			<div id="step-control">
+				<input id="speed-slider" type="range" min="1" max="60" value="2">
+				<span id="speed">2 IPS</span>
+				<div id="pause" class="button fas fa-play"></div>
+				<div id="step" class="button fas fa-step-forward"></div> 
+			</div>
+			<div id="instruction-editor">
+				<label for="comment">Kommentar</label>
+				<textarea id="comment" class="wideinput" rows=3></textarea>
+				<div id="instruction-input">
+					<input id="von-zustand" type="text" placeholder="">
+					⟶
+					<input id="zu-zustand" type="text" placeholder="">
+					<br>
+					<input id="von-zeichen" type="text" placeholder="">
+					⟶
+					<input id="zu-zeichen" type="text" placeholder="">
+					<br>
+					<div id="direction">
+						<input id="dir-left" type="radio" name="radioDirection"><label class="fas fa-hand-point-left" for="dir-left"></label>
+						<input id="dir-stop" type="radio" name="radioDirection"><label class="fas fa-stop" for="dir-stop"></label>
+						<input id="dir-right" type="radio" name="radioDirection"><label class="fas fa-hand-point-right" for="dir-right"></label>
+					</div>
+				</div>
+			</div>
+			<div id="program-container">
+				<div class="instruction">Instruction A</div>
+				<div class="instruction">Instruction B</div>
+				<div id="new-instruction">+</div>
+			</div>
+			<textarea id="program-text" rows=4></textarea>
+		</div>
+	</body>
+	<script src="index.js"></script>
+</html>
