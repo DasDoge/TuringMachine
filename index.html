@@ -9,7 +9,7 @@
 	<body>
 		<input type="text" id="bandtext">
 		<div id="visualizer">
-			<div id="zustand">
+			<div id="zustand" contenteditable>
 				q0
 			</div>
 			<div id="band">
@@ -23,8 +23,10 @@
 			<div id="step-control">
 				<input id="speed-slider" type="range" min="1" max="60" value="2">
 				<span id="speed">2 IPS</span>
+				<div id="left" class="button fas fa-chevron-left"></div>
 				<div id="pause" class="button fas fa-play"></div>
 				<div id="step" class="button fas fa-step-forward"></div> 
+				<div id="right" class="button fas fa-chevron-right"></div>
 			</div>
 			<div id="instruction-editor">
 				<label for="comment">Kommentar</label>
@@ -46,11 +48,9 @@
 				</div>
 			</div>
 			<div id="program-container">
-				<div class="instruction">Instruction A</div>
-				<div class="instruction">Instruction B</div>
 				<div id="new-instruction">+</div>
 			</div>
-			<textarea id="program-text" rows=4></textarea>
+			<textarea id="program-text" rows=8></textarea>
 		</div>
 	</body>
 	<script src="index.js"></script>

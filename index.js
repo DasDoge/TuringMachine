@@ -7,29 +7,10 @@ const $eT = $("#zu-zeichen");
 
 var running = false;
 var speed = 2;
-var lastCell = 0;
+var index = 0;
 var editingInstructionIndex = 0;
 var currentInstructionIndex = 0;
 var instructions = [];
-instructions[0] = {
-	comment: "beispiel",
-	qFrom: "q0",
-	qTo: "q1",
-	eFrom: "0",
-	eTo: "0",
-	dir: 1
-}
-instructions[1] = {
-	comment: "beispiel2",
-	qFrom: "q1",
-	qTo: "q0",
-	eFrom: "1",
-	eTo: "1",
-	dir: -1
-}
-
-updateInstruction(0);
-updateInstruction(1);
 
 $c.on("input", function() {
 	instructions[editingInstructionIndex].comment = $c.val();
@@ -58,14 +39,51 @@ $("#bandtext").on("input", function() {
 		cell(i, text[i]);
 	}
 });
+$("#program-text").on("input", function() {
+	let splits = $("#program-text").val().split('\n');
+	for(let i = 0; i < splits.length; i++) {
+		if(!instructions[i])
+			instructions[i] = {};
+		let ins = instructions[i];
+		let splits2 = splits[i].split(';');
+		if(splits2.length >= 4) {
+			ins.comment = splits2[3];
+			ins.qFrom = splits2[0].split(':')[0];
+			ins.eFrom = splits2[0].split(':')[1];
+			ins.qTo = splits2[1].split(':')[0];
+			ins.eTo = splits2[1].split(':')[1];
+			ins.dir = parseInt(splits2[2]);
+		}
+		if(i >= $("#program-container .instruction").length) {
+			$("#new-instruction").before($("<div></div>").addClass("instruction"));
+		}
+		$("#program-container .instruction").eq(i).text(`${ins.qFrom || ''}: ${ins.eFrom || ''} 🠒 ${ins.qTo || ''}: ${ins.eTo || ''} ${['◄', '■', '►'][ins.dir + 1] || ''}`);
+	}
+	if(instructions.length > splits.length) {
+		instructions = instructions.slice(0, splits.length);
+		$("#program-container .instruction").slice(splits.length).remove();
+		editingInstructionIndex = Math.min(editingInstructionIndex, instructions.length -1);
+	}
+	let ins = instructions[editingInstructionIndex];
+	$qF.val(ins.qFrom);
+	$eF.val(ins.eFrom);
+	$qT.val(ins.qTo);
+	$eT.val(ins.eTo);
+	$c.val(ins.comment);
+	$("#direction input").eq(ins.dir + 1).prop("checked", true);
+});
+
+String.prototype.replaceAt = function(index, replacement) {
+	return this.substr(0, index) + replacement + this.substr(index + replacement.length);
+}
 
 function i(x) {
 	if(x != null) {
-		$("#cell-container").css("right", x + "em");
-		return x;
-	} else {
-		return $("#cell-container").css("right").replace(/[^-\d\.]/g, '')/$("#cell-container").css("font-size").replace(/[^-\d\.]/g, '');
+		index = x;
+		$("#cell-container").css("right", index + "em");
 	}
+	return index;
+	//return $("#cell-container").css("right").replace(/[^-\d\.]/g, '')/$("#cell-container").css("font-size").replace(/[^-\d\.]/g, '');
 }
 
 function q(x) {
@@ -82,15 +100,6 @@ function cell(ind, x) {
 
 function initCells() {
 	$("#cell-container").empty();
-	/*
-	let i = 0;
-	do {
-		$("#band").append(createCell(i));
-		i++;
-	} while(i * $("#band .cell:first-child").outerWidth() < $("#visualizer").width());
-	*/
-	$("#cell-container").append( $("<div contenteditable></div>").addClass("cell").text(0));
-	$("#cell-container").append( $("<div contenteditable></div>").addClass("cell").text(1));
 	for(let i = 0; i < 100; i++) {
 		$("#cell-container").append( $("<div contenteditable></div>").addClass("cell"));
 	}
@@ -100,8 +109,17 @@ function initInstruction() {
 
 }
 
+function updateBand(x) {
+	if(x == null)
+		x = i();
+	let text =  $("#bandtext").val();
+	if (x > text.length)
+		text = text + ' '.repeat(x - text.length);
+	$("#bandtext").val(text.replaceAt(x, cell(x) || ' '));
+}
+
 function instructionClick() {
-	$("#program-container").children().eq(editingInstructionIndex).removeClass("viewing");
+	$("#program-container").children().removeClass("viewing");
 	$(this).addClass("viewing");
 	editingInstructionIndex = $(this).index();
 	let instruction = instructions[editingInstructionIndex];
@@ -114,10 +132,28 @@ function instructionClick() {
 }
 
 function updateInstruction(ind) {
-	if(!ind)
+	if(ind == null)
 		ind = editingInstructionIndex;
-	let instruction = instructions[ind];
-	$("#program-container .instruction").eq(ind).text(`${instruction.qFrom}: ${instruction.eFrom} 🠒 ${instruction.qTo}: ${instruction.eTo} ${['◄', '■', '►'][instruction.dir + 1]}`);
+	let ins = instructions[ind];
+	$("#program-container .instruction").eq(ind).text(`${ins.qFrom}: ${ins.eFrom} 🠒 ${ins.qTo}: ${ins.eTo} ${['◄', '■', '►'][ins.dir + 1]}`);
+	let text = $("#program-text").val().split('\n');
+	text[ind] = `${ins.qFrom || ''}:${ins.eFrom || ''};${ins.qTo || ''}:${ins.eTo || ''};${ins.dir || ''};${ins.comment || ''}`;
+	$("#program-text").val(text.join('\n'));
+}
+
+function pause(bool) {
+	if(!(bool === false || bool === true))
+		bool = !running;
+	running = bool;
+	if(running) {
+		$("#pause").addClass("fa-pause");
+		$("#pause").removeClass("fa-play");
+	} else {
+		$("#pause").addClass("fa-play");
+		$("#pause").removeClass("fa-pause");
+	}
+	if(running)
+		step();
 }
 
 initCells();
@@ -126,12 +162,14 @@ $("#new-instruction").on("click", function() {
 	instructions.push({
 		comment: "",
 		qFrom: q(),
-		qTo: "",
+		qTo: q(),
 		eFrom: cell(),
-		eTo: "",
+		eTo: cell(),
 		dir: 1
 	});
-	$("#program-container .instruction:last").after($("<div></div>").text("new Instruction").addClass("instruction"));
+	$("#new-instruction").before($("<div></div>").text("").addClass("instruction"));
+	editingInstructionIndex = instructions.length - 1;
+	$(".instruction:last").trigger("click");
 	updateInstruction(instructions.length - 1);
 });
 $("#speed-slider").on("input", function() {
@@ -139,46 +177,57 @@ $("#speed-slider").on("input", function() {
 	$("#speed").text(speed + " IPS");
 	$("#cell-container").css("transition-duration", (1 / speed) + 's');
 });
-$("#pause").on("click", function() {
-	running = !running;
-	$(this).toggleClass("fa-pause fa-play");
-	if(running)
-		step();
-});
+$("#pause").on("click", pause);
 $("#step").on("click", step);
+$("#left").on("click", function() { i(i() - 1); });
+$("#right").on("click", function() { i(i() + 1); });
 
-$("#cell-container").on("change", "> .cell", function() {
-	let ind = $(this).index();
-	let bandtext = $("#bandtext").val();
-	if(bandtext.length < ind)
-		bandtext += ' '.repeat(ind - bandtext.length);
-	bandtext[ind] = $(this).text();
-	$("#bandtext").val(bandtext);
+$("#cell-container").on("input", "> .cell", function(event) {
+	$(this).text(event.originalEvent.data);
+	updateBand($(this).index());
 });
 
 function step() {
-	if(!running)
+	if(!running && $(this).attr("id") != "step")
 		return;
 	let cq = q();
 	let ce = cell(i());
 	$("#program-container").children().eq(currentInstructionIndex).removeClass("current");
 	currentInstructionIndex = instructions.findIndex(e => e.qFrom == cq && e.eFrom == ce);
 	if(currentInstructionIndex == -1) {
-		running = false;
+		pause(false);
 		console.log("No fitting instruction");
+		$("#active-cell-marker").addClass("red");
 		return;
 	}
+	$("#active-cell-marker").removeClass("red");
 	let ci = instructions[currentInstructionIndex];
 	$("#program-container").children().eq(currentInstructionIndex).addClass("current");
 	cell(i(), ci.eTo);
 	q(ci.qTo);
-	if(ci.dir == 0)
-		return running = false;
+	updateBand();
+	if(ci.dir == 0) {
+		pause(false);
+		$("#active-cell-marker").addClass("red");
+		return;
+	}
 	$("#cell-container").one("transitionend", step);
 	i(i() + ci.dir);
 }
 
 $(".instruction:first").trigger("click");
 
-if(running)
-	step();
+step();
+
+/* Binary Counter
+
+q0:;q1:;-1;
+q0:0;q0:0;1;
+q0:1;q0:1;1;
+q1:;q2:1;1;
+q1:0;q2:1;-1;
+q1:1;q1:0;-1;
+q2:;q0:;-1;
+q2:0;q2:0;1;
+q2:1;q2:1;1;
+*/

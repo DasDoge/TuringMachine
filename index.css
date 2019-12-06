@@ -15,6 +15,7 @@ html, body {
 #bandtext {
 	width: 100%;
 	font-size: 1em;
+	font-family: monospace;
 }
 
 #zustand {
@@ -45,6 +46,11 @@ html, body {
 	text-align: center;
 }
 
+.cell::selection {
+	background-color: transparent;
+	color: #464;
+}
+
 #active-cell-marker-frame {
 	display: block;
 	background-color: transparent;
@@ -61,6 +67,9 @@ html, body {
 	pointer-events: none;
 }
 
+.red {
+	background-color: tomato !important;
+}
 
 #active-cell-marker {
 	display: block;
@@ -116,10 +125,12 @@ html, body {
 	background-color: wheat;
 	font-size: 1.25em;
 	font-family: monospace;
+	overflow: auto;
 }
 
 #program-text {
 	width: 100%;
+	font-family: monospace;
 }
 
 .instruction {
